@@ -55,12 +55,12 @@ export class LinkedList<T> {
     // * validate index
     this._validateIndex(index);
 
-    // * insert at start
+    // * insert at head
     if (index === 0) {
       this.prepend(value);
     }
 
-    // * insert at end
+    // * insert at tail
     else if (index === this.size) {
       this.append(value);
       return;
@@ -85,13 +85,13 @@ export class LinkedList<T> {
     this._validateIndex(index);
     let removed: Node<T> | null = null;
 
-    // * remove at start
+    // * remove at head
     if (index === 0 && this.head) {
       removed = this.head;
       this.head = this.head.next;
     }
 
-    // * remove at middle or end
+    // * remove at middle or tail
     else {
       const prev = this._findPrev(index);
       if (prev) {
@@ -103,6 +103,51 @@ export class LinkedList<T> {
     // * update size
     this.size--;
     return removed?.value;
+  }
+
+  removeValue(value: T) {
+    if (this.isEmpty()) {
+      return null;
+    }
+
+    // * remove at head
+    if (this.head?.value === value) {
+      this.head = this.head.next;
+      this.size--;
+      return value;
+    }
+
+    // * remvoe at middle or tail
+    else {
+      let prev = this.head;
+      while (prev?.next) {
+        if (prev.next.value === value) break;
+        prev = prev.next;
+      }
+      if (prev?.next) {
+        const removed = prev.next;
+        prev.next = removed.next;
+        this.size--;
+        return value;
+      }
+
+      return null;
+    }
+  }
+
+  findIndex(value: T) {
+    if (this.isEmpty()) {
+      return -1;
+    }
+
+    let i = 0;
+    let curr = this.head;
+    while (curr) {
+      if (curr.value === value) return i;
+      curr = curr.next;
+      i++;
+    }
+    return -1;
   }
 
   print() {
@@ -117,6 +162,20 @@ export class LinkedList<T> {
       }
       console.log(v);
     }
+  }
+
+  reverse() {
+    let prev = null;
+    let curr = this.head;
+
+    while (curr) {
+      let next = curr.next;
+      curr.next = prev;
+      prev = curr;
+      curr = next;
+    }
+
+    this.head = prev;
   }
 
   private _validateIndex(index: number) {
